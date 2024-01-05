@@ -8,6 +8,7 @@ const AuthForm = () => {
   const history = useHistory();
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
+
   const authCtx = useContext(AuthContext)
 
   const [isLogin, setIsLogin] = useState(true);
@@ -23,7 +24,7 @@ const AuthForm = () => {
     const enteredEmail = emailInputRef.current.value;
     const enteredPassword = passwordInputRef.current.value;
 
-    // optional: Add validation
+    
 
     setIsLoading(true);
     let url;
@@ -61,7 +62,10 @@ const AuthForm = () => {
         }
       })
       .then((data) => {
-        authCtx.login(data.idToken)
+        const expirationTime = new Date(
+          new Date().getTime() + +data.expiresIn * 1000
+        );
+        authCtx.login(data.idToken, expirationTime.toISOString());
         history.replace('/');
       })
       .catch((err) => {
@@ -106,4 +110,3 @@ const AuthForm = () => {
 
 export default AuthForm;
 
-// https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAPTNI_cnBDpM3UpcM5Z8KjHllp5W3snT0
